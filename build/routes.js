@@ -78280,15 +78280,41 @@ export default {
         "categories": [
           "social-media"
         ],
-        "example": "/picuki/profile/stefaniejoosten",
+        "example": "/picuki/profile/linustech",
         "parameters": {
-          "id": "Instagram user id",
-          "type": "Type of profile page (profile or tagged)",
-          "functionalFlag": "functional flag, see the table below\n| functionalFlag | Video embedding                         | Fetching Instagram Stories |\n| -------------- | --------------------------------------- | -------------------------- |\n| 0              | off, only show video poster as an image | off                        |\n| 1 (default)    | on                                      | off                        |\n| 10             | on                                      | on                         |\n"
+          "id": "Tiktok user id (without @)",
+          "type": {
+            "description": "Type of profile page",
+            "options": [
+              {
+                "value": "profile",
+                "label": "Profile Page"
+              },
+              {
+                "value": "story",
+                "label": "Story Page"
+              }
+            ],
+            "default": "profile"
+          },
+          "functionalFlag": {
+            "description": "Functional flag for video embedding",
+            "options": [
+              {
+                "value": "0",
+                "label": "Off, only show video poster as an image"
+              },
+              {
+                "value": "1",
+                "label": "On"
+              }
+            ],
+            "default": "1"
+          }
         },
         "features": {
           "requireConfig": false,
-          "requirePuppeteer": false,
+          "requirePuppeteer": true,
           "antiCrawler": true,
           "supportBT": false,
           "supportPodcast": false,
@@ -78303,9 +78329,9 @@ export default {
           },
           {
             "source": [
-              "www.picuki.com/profile-tagged/:id"
+              "www.picuki.com/story/:id"
             ],
-            "target": "/profile/:id/tagged"
+            "target": "/profile/:id/story"
           }
         ],
         "name": "User Profile - Picuki",
@@ -78315,13 +78341,12 @@ export default {
           "devinmugen",
           "NekoAria"
         ],
-        "description": "\n::: warning\n  Instagram Stories do not have a reliable guid. It is possible that your RSS reader show the same story more than once.\n  Though, every Story expires after 24 hours, so it may be not so serious.\n:::",
         "location": "profile.ts",
         "module": () => import('@/routes/picuki/profile.ts')
       }
     },
-    "name": "Instagram",
-    "url": "www.instagram.com",
+    "name": "TikTok",
+    "url": "tiktok.com",
     "lang": "en"
   },
   "pikabu": {
@@ -113310,7 +113335,12 @@ export default {
           "id": "作者 id，可在用户主页 URL 中找到"
         },
         "features": {
-          "requireConfig": false,
+          "requireConfig": [
+            {
+              "name": "ZHIHU_COOKIES",
+              "description": ""
+            }
+          ],
           "requirePuppeteer": false,
           "antiCrawler": true,
           "supportBT": false,
@@ -113374,7 +113404,12 @@ export default {
           "getAll": "获取全部收藏内容，任意值为打开"
         },
         "features": {
-          "requireConfig": false,
+          "requireConfig": [
+            {
+              "name": "ZHIHU_COOKIES",
+              "description": ""
+            }
+          ],
           "requirePuppeteer": false,
           "antiCrawler": true,
           "supportBT": false,
@@ -113649,7 +113684,12 @@ export default {
           "isTop": "仅精华，默认为否，其他值为是"
         },
         "features": {
-          "requireConfig": false,
+          "requireConfig": [
+            {
+              "name": "ZHIHU_COOKIES",
+              "description": ""
+            }
+          ],
           "requirePuppeteer": false,
           "antiCrawler": true,
           "supportBT": false,
@@ -113711,7 +113751,12 @@ export default {
           "id": "专栏 id，可在专栏主页 URL 中找到"
         },
         "features": {
-          "requireConfig": false,
+          "requireConfig": [
+            {
+              "name": "ZHIHU_COOKIES",
+              "description": ""
+            }
+          ],
           "requirePuppeteer": false,
           "antiCrawler": true,
           "supportBT": false,
