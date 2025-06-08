@@ -70467,7 +70467,8 @@ export default {
       "/:category": {
         "path": "/:category",
         "categories": [
-          "traditional-media"
+          "traditional-media",
+          "popular"
         ],
         "view": 0,
         "example": "/newyorker/latest",
@@ -98354,8 +98355,7 @@ export default {
       "/express": {
         "path": "/express",
         "categories": [
-          "finance",
-          "popular"
+          "finance"
         ],
         "view": 0,
         "example": "/techflowpost/express",
