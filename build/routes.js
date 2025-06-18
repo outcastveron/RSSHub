@@ -6813,8 +6813,7 @@ export default {
         "example": "/aibase/news",
         "description": "获取 AI 资讯列表",
         "categories": [
-          "new-media",
-          "popular"
+          "new-media"
         ],
         "features": {
           "requireConfig": false,
@@ -7696,7 +7695,8 @@ export default {
       "/news": {
         "path": "/news",
         "categories": [
-          "finance"
+          "finance",
+          "popular"
         ],
         "example": "/ainvest/news",
         "parameters": {},
@@ -13085,8 +13085,7 @@ export default {
           "channel": "channel, default to `top stories`"
         },
         "categories": [
-          "traditional-media",
-          "popular"
+          "traditional-media"
         ],
         "description": "Provides a better reading experience (full text articles) over the official ones.\n\n    Support major channels, refer to [BBC RSS feeds](https://www.bbc.co.uk/news/10628494). Eg, `business` for `https://feeds.bbci.co.uk/news/business/rss.xml`.\n\n    -   Channel contains sub-directories, such as `https://feeds.bbci.co.uk/news/world/asia/rss.xml`, replace `/` with `-`, `/bbc/world-asia`.",
         "location": "index.ts",
@@ -34575,7 +34574,8 @@ export default {
       "/express-news": {
         "path": "/express-news",
         "categories": [
-          "finance"
+          "finance",
+          "popular"
         ],
         "view": 0,
         "example": "/fastbull/express-news",
@@ -79845,8 +79845,7 @@ export default {
       "/av/:catid?": {
         "path": "/av/:catid?",
         "categories": [
-          "bbs",
-          "popular"
+          "bbs"
         ],
         "example": "/playno1/av",
         "parameters": {
@@ -113233,7 +113232,8 @@ export default {
       "/znews/:section?": {
         "path": "/znews/:section?",
         "categories": [
-          "traditional-media"
+          "traditional-media",
+          "popular"
         ],
         "example": "/zaobao/znews/china",
         "parameters": {
