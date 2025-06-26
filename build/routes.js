@@ -54729,8 +54729,7 @@ export default {
       "/ranking/:type": {
         "path": "/ranking/:type",
         "categories": [
-          "new-media",
-          "popular"
+          "new-media"
         ],
         "example": "/ithome/ranking/24h",
         "parameters": {
@@ -67460,7 +67459,8 @@ export default {
       "/:type?": {
         "path": "/:type?",
         "categories": [
-          "new-media"
+          "new-media",
+          "popular"
         ],
         "example": "/mittrchina/index",
         "parameters": {
