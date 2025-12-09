@@ -38797,7 +38797,8 @@ export default {
       "/live": {
         "path": "/live",
         "categories": [
-          "finance"
+          "finance",
+          "popular"
         ],
         "view": 0,
         "example": "/gelonghui/live",
@@ -45511,8 +45512,7 @@ export default {
     "apiRoutes": {},
     "url": "sh.gov.cn",
     "categories": [
-      "government",
-      "popular"
+      "government"
     ],
     "description": "",
     "lang": "zh-CN",
