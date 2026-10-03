@@ -1,14 +1,13 @@
-import { DataItem, Route } from '@/types';
-
-import cache from '@/utils/cache';
 import { load } from 'cheerio';
-import ofetch from '@/utils/ofetch';
-import { art } from '@/utils/render';
-import path from 'node:path';
+import { FetchError } from 'ofetch';
+
 import { config } from '@/config';
-import { puppeteerGet } from './utils';
-import puppeteer from '@/utils/puppeteer';
 import NotFoundError from '@/errors/types/not-found';
+import { renderUserEmbed } from '@/routes/tiktok/templates/user';
+import type { DataItem, Route } from '@/types';
+import cache from '@/utils/cache';
+import ofetch from '@/utils/ofetch';
+import { getPlaywrightPage } from '@/utils/playwright';
 
 export const route: Route = {
     path: '/profile/:id/:type?/:functionalFlag?',
@@ -74,10 +73,10 @@ async function handler(ctx) {
     const functionalFlag = ctx.req.param('functionalFlag') ?? '1';
     const useIframe = functionalFlag !== '0';
 
-    const baseUrl = 'https://www.picuki.com';
+    const baseUrl = 'https://www.tikvib.com';
     const profileUrl = `${baseUrl}/${type === 'story' ? 'story' : 'profile'}/${id}`;
 
-    const data = (await cache.tryGet(`picuki:${type}:${id}`, async () => {
+    const data = await cache.tryGet(`picuki:${type}:${id}`, async () => {
         let response;
         try {
             response = await ofetch(profileUrl, {
@@ -86,12 +85,21 @@ async function handler(ctx) {
                 },
             });
         } catch (error) {
-            if (error.status === 403) {
-                const browser = await puppeteer();
-                response = await puppeteerGet(profileUrl, browser);
-                await browser.close();
+            if (error instanceof FetchError && error.statusCode === 403) {
+                const { page, destroy } = await getPlaywrightPage(profileUrl, {
+                    onBeforeLoad: async (page) => {
+                        const expectResourceTypes = new Set(['document', 'script', 'xhr', 'fetch']);
+                        await page.route('**/*', (route) => {
+                            const request = route.request();
+                            expectResourceTypes.has(request.resourceType()) ? route.continue() : route.abort();
+                        });
+                    },
+                });
+                await page.waitForSelector('.content');
+                response = await page.content();
+                await destroy();
             } else {
-                throw new NotFoundError(error.message);
+                throw new NotFoundError(error instanceof Error ? error.message : String(error));
             }
         }
 
@@ -104,23 +112,31 @@ async function handler(ctx) {
             throw new Error($('.error-p span').text().trim() || 'Profile not found');
         }
 
-        const items = $('.posts-video .posts__video-item')
+        const username = $('.profile-info .username').text().trim();
+
+        const items = $('.posts-video .posts__video-item .posts__video-item-a')
             .toArray()
             .map((item) => {
                 const $item = $(item);
                 const videoId = $item.attr('href')?.split('/').pop();
                 const img = $item.find('img');
+                const poster = img.attr('src');
+                if (!videoId || !poster) {
+                    return null;
+                }
                 return {
                     title: img.attr('alt') || '',
+                    author: username,
                     renderData: {
-                        poster: img.attr('src'),
-                        source: $item.find('.popup-open').data('source'),
+                        poster,
+                        source: `${baseUrl}/player/${videoId}`,
                         id: videoId,
                     },
                     link: `${baseUrl}/media/${videoId}`,
                     guid: `https://www.tiktok.com/@${id}/video/${videoId}`,
                 };
-            });
+            })
+            .filter((item) => item !== null);
 
         return {
             title: $('head title').text(),
@@ -128,25 +144,11 @@ async function handler(ctx) {
             image: $('.profile-image').attr('src'),
             items,
         };
-    })) as {
-        title: string;
-        description: string;
-        image: string;
-        items: {
-            title: string;
-            renderData: {
-                poster: string;
-                source: string;
-                id: string;
-            };
-            link: string;
-            guid: string;
-        }[];
-    };
+    });
 
     const items: DataItem[] = data.items.map((item) => ({
         ...item,
-        description: art(path.join(__dirname, '../tiktok/templates/user.art'), {
+        description: renderUserEmbed({
             poster: item.renderData.poster,
             source: item.renderData.source,
             useIframe,
